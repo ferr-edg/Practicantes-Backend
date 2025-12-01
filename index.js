@@ -33,11 +33,34 @@ app.use(express.json())
 const SUPABASE_URL = process.env.SUPABASE_URL
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 
+// Debug: mostrar qué variables están disponibles (sin mostrar valores sensibles)
+console.log('🔍 Verificando variables de entorno...')
+console.log('SUPABASE_URL está configurada:', !!SUPABASE_URL)
+console.log('SUPABASE_SERVICE_ROLE_KEY está configurada:', !!SUPABASE_SERVICE_ROLE_KEY)
+console.log('Variables de entorno disponibles:', Object.keys(process.env).filter(key => 
+  key.includes('SUPABASE') || key.includes('PORT') || key.includes('NODE')
+).join(', '))
+
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.error(
-    '❌ ERROR: SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY no están configuradas en las variables de entorno'
-  )
-  console.error('Por favor, configura estas variables en Render antes de continuar')
+  console.error('')
+  console.error('❌ ERROR: Variables de entorno faltantes')
+  console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+  console.error('SUPABASE_URL:', SUPABASE_URL ? '✅ Configurada' : '❌ FALTA')
+  console.error('SUPABASE_SERVICE_ROLE_KEY:', SUPABASE_SERVICE_ROLE_KEY ? '✅ Configurada' : '❌ FALTA')
+  console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+  console.error('')
+  console.error('📝 INSTRUCCIONES PARA RENDER:')
+  console.error('1. Ve a tu servicio en Render Dashboard')
+  console.error('2. Click en "Environment" en el menú lateral')
+  console.error('3. Agrega estas dos variables:')
+  console.error('   - Key: SUPABASE_URL')
+  console.error('     Value: https://tu-proyecto.supabase.co')
+  console.error('   - Key: SUPABASE_SERVICE_ROLE_KEY')
+  console.error('     Value: tu_service_role_key_secreta')
+  console.error('4. Guarda los cambios (Render redesplegará automáticamente)')
+  console.error('')
+  console.error('💡 Las variables deben estar en la sección "Environment Variables" de Render')
+  console.error('')
   process.exit(1)
 }
 
