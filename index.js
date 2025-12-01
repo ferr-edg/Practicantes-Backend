@@ -8,10 +8,22 @@ dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 4000
 
-// CORS: ajusta origin si cambias el puerto del frontend
+// CORS: permite localhost en desarrollo y cualquier origen en producción (ajusta según necesites)
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : ['http://localhost:5173']
+
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: (origin, callback) => {
+      // Permite requests sin origin (mobile apps, Postman, etc.)
+      if (!origin) return callback(null, true)
+      if (allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    },
   })
 )
 
@@ -22,9 +34,11 @@ const SUPABASE_URL = process.env.SUPABASE_URL
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.warn(
-    '⚠️ SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY no están configuradas en .env'
+  console.error(
+    '❌ ERROR: SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY no están configuradas en las variables de entorno'
   )
+  console.error('Por favor, configura estas variables en Render antes de continuar')
+  process.exit(1)
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
