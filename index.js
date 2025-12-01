@@ -66,6 +66,18 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
+// Ruta raíz
+app.get('/', (req, res) => {
+  res.json({ 
+    ok: true, 
+    message: 'Backend de evaluación técnica - API activa',
+    endpoints: {
+      health: '/api/health',
+      evaluaciones: 'POST /api/evaluaciones'
+    }
+  })
+})
+
 // Healthcheck
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, message: 'Backend de evaluación técnica activo' })
@@ -119,8 +131,9 @@ app.post('/api/evaluaciones', async (req, res) => {
   }
 })
 
-app.listen(PORT, () => {
-  console.log(`🚀 Backend escuchando en http://localhost:${PORT}`)
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Backend escuchando en puerto ${PORT}`)
+  console.log(`✅ Servidor listo para recibir peticiones`)
 })
 
 
