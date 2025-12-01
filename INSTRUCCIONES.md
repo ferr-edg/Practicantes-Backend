@@ -142,3 +142,4 @@ Puedes ver todas las evaluaciones en el dashboard de Supabase:
 - Asegúrate de que el backend esté corriendo en `http://localhost:4000`
 - Verifica que CORS esté configurado correctamente
 
+
