@@ -8,22 +8,32 @@ dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 4000
 
-// CORS: permite localhost en desarrollo y cualquier origen en producción (ajusta según necesites)
+// CORS: configuración para desarrollo y producción
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(',')
-  : ['http://localhost:5173']
+  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+  : []
 
 app.use(
   cors({
     origin: (origin, callback) => {
       // Permite requests sin origin (mobile apps, Postman, etc.)
       if (!origin) return callback(null, true)
-      if (allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
-        callback(null, true)
-      } else {
-        callback(new Error('Not allowed by CORS'))
+      
+      // Si hay orígenes específicos configurados, solo permite esos
+      if (allowedOrigins.length > 0) {
+        if (allowedOrigins.includes(origin)) {
+          callback(null, true)
+        } else {
+          callback(new Error('Not allowed by CORS'))
+        }
+        return
       }
+      
+      // Si no hay orígenes configurados, permite todos (útil para desarrollo y producción)
+      // En producción, puedes restringir esto configurando ALLOWED_ORIGINS
+      callback(null, true)
     },
+    credentials: true,
   })
 )
 
